@@ -2,7 +2,7 @@
 	"id": "password-audit",
 	"name": "Password Audit",
 	"version": "1.0.0",
-	"minAppVersion": "0.12.0",
+	"minAppVersion": "0.15.0",
 	"description": "A plugin to audit passwords for strength and breaches, and generate secure passwords.",
 	"author": "Sai Prashanth Pulisetti",
 	"authorUrl": "https://github.com/pulisettis",
