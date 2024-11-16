@@ -1,10 +1,11 @@
 {
 	"id": "password-audit-plugin",
 	"name": "Password Audit Plugin",
-	"version": "2.0.0",
+	"version": "1.0.0",
 	"minAppVersion": "0.15.0",
-	"author": "Prashanth PUlisetti",
-	"description": "A minimalist password strength analyzer and breach checker for Obsidian.",
+	"description": "A plugin to audit passwords for strength and breaches, and generate secure passwords.",
+	"author": "Sai Prashanth Pulisetti (@pulisettis)",
+	"authorUrl": "https://github.com/prashanthpulsietti",
 	"isDesktopOnly": false
   }
   

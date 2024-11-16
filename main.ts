@@ -1,17 +1,15 @@
 // src/main.ts
-import { Plugin, WorkspaceLeaf, ItemView, Setting } from "obsidian";
+import { Plugin, WorkspaceLeaf, ItemView, Setting, Notice } from "obsidian";
 
 const VIEW_TYPE_PASSWORD_AUDIT = "password-audit-view";
 
 export default class PasswordAuditPlugin extends Plugin {
     async onload() {
-        // Register a new view for the right-side panel
         this.registerView(
             VIEW_TYPE_PASSWORD_AUDIT,
             (leaf) => new PasswordAuditView(leaf)
         );
 
-        // Add a command to open the Password Audit panel
         this.addCommand({
             id: "open-password-audit",
             name: "Open Password Audit Panel",
@@ -20,7 +18,6 @@ export default class PasswordAuditPlugin extends Plugin {
             },
         });
 
-        // Add a command to generate passwords
         this.addCommand({
             id: "generate-password",
             name: "Generate Password",
@@ -38,7 +35,7 @@ export default class PasswordAuditPlugin extends Plugin {
     async activateView(callback?: (view: PasswordAuditView) => void) {
         const leaves = this.app.workspace.getLeavesOfType(VIEW_TYPE_PASSWORD_AUDIT);
         if (leaves.length === 0) {
-            await this.app.workspace.getRightLeaf(false).setViewState({
+            await this.app.workspace.getRightLeaf(false)?.setViewState({
                 type: VIEW_TYPE_PASSWORD_AUDIT,
                 active: true,
             });
@@ -50,14 +47,10 @@ export default class PasswordAuditPlugin extends Plugin {
     }
 
     generatePassword(length: number): string {
-        const chars =
-            "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()";
-        let password = "";
-        for (let i = 0; i < length; i++) {
-            const randomIndex = Math.floor(Math.random() * chars.length);
-            password += chars[randomIndex];
-        }
-        return password;
+        const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()";
+        return Array.from({ length }, () =>
+            chars[Math.floor(Math.random() * chars.length)]
+        ).join("");
     }
 
     onunload() {
@@ -66,7 +59,7 @@ export default class PasswordAuditPlugin extends Plugin {
 }
 
 class PasswordAuditView extends ItemView {
-    private container: HTMLElement;
+    private container: HTMLElement | null = null;
 
     constructor(leaf: WorkspaceLeaf) {
         super(leaf);
@@ -82,14 +75,12 @@ class PasswordAuditView extends ItemView {
 
     async onOpen() {
         const container = (this.container = this.contentEl);
+        if (!container) return;
         container.empty();
-
-        // Inject custom CSS styles
         this.injectCSS();
 
         container.createEl("h2", { text: "Password Audit" });
 
-        // Input for password analysis
         const inputDiv = container.createDiv({ cls: "password-input-container" });
         new Setting(inputDiv)
             .setName("Analyze a Password")
@@ -103,7 +94,6 @@ class PasswordAuditView extends ItemView {
                     });
             });
 
-        // Results container
         const resultsDiv = container.createDiv({ cls: "password-results-container" });
         resultsDiv.createEl("p", { text: "Password analysis results will appear here." });
     }
@@ -114,7 +104,7 @@ class PasswordAuditView extends ItemView {
 
     displayAnalysis(strength: string, breached: boolean) {
         const resultsDiv = this.container?.querySelector(".password-results-container");
-        if (!resultsDiv) return; // Exit if resultsDiv is null
+        if (!resultsDiv) return;
 
         resultsDiv.empty();
         resultsDiv.createEl("p", {
@@ -132,10 +122,24 @@ class PasswordAuditView extends ItemView {
 
     displayPassword(password: string) {
         const resultsDiv = this.container?.querySelector(".password-results-container");
-        if (!resultsDiv) return; // Exit if resultsDiv is null
+        if (!resultsDiv) return;
 
         resultsDiv.empty();
+
+        // Display the generated password
         resultsDiv.createEl("p", { text: `Generated Password: ${password}` });
+
+        // Add a "Copy" button
+        const copyButton = resultsDiv.createEl("button", { text: "Copy Password" });
+        copyButton.addEventListener("click", async () => {
+            try {
+                await navigator.clipboard.writeText(password);
+                new Notice("Password copied to clipboard!");
+            } catch (err) {
+                console.error("Failed to copy password: ", err);
+                new Notice("Failed to copy password.");
+            }
+        });
     }
 
     analyzeStrength(password: string): string {
@@ -163,37 +167,35 @@ class PasswordAuditView extends ItemView {
         return hashArray.map((b) => b.toString(16).padStart(2, "0")).join("");
     }
 
-    // Inject CSS for styling
     injectCSS() {
         const style = document.createElement("style");
         style.innerText = `
-        .password-input-container {
-            margin-bottom: 16px;
-        }
+        .password-input-container { margin-bottom: 16px; }
         .password-results-container {
-            padding: 8px;
-            border: 1px solid var(--background-modifier-border);
-            border-radius: 4px;
-            background-color: var(--background-primary);
+            padding: 8px; border: 1px solid var(--background-modifier-border);
+            border-radius: 4px; background-color: var(--background-primary);
             margin-top: 16px;
         }
-        .strength-weak {
-            color: #e63946;
-            font-weight: bold;
+        .strength-weak { color: #e63946; font-weight: bold; }
+        .strength-medium { color: #ffb703; font-weight: bold; }
+        .strength-strong { color: #2a9d8f; font-weight: bold; }
+        .breach-warning { color: #e63946; }
+        .breach-safe { color: #2a9d8f; }
+        button {
+            margin-top: 8px;
+            padding: 6px 12px;
+            font-size: 14px;
+            color: #fff;
+            background-color: #2a9d8f;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
         }
-        .strength-medium {
-            color: #ffb703;
-            font-weight: bold;
+        button:hover {
+            background-color: #21867a;
         }
-        .strength-strong {
-            color: #2a9d8f;
-            font-weight: bold;
-        }
-        .breach-warning {
-            color: #e63946;
-        }
-        .breach-safe {
-            color: #2a9d8f;
+        button:active {
+            background-color: #1b6d64;
         }
         `;
         document.head.appendChild(style);
