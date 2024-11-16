@@ -35,11 +35,14 @@ A powerful Obsidian plugin to help you **audit passwords** for strength and secu
 
 ## 🖼️ Screenshots
 
+### Access Plugin
+![Command Panel](./Screenshots/commandlet.png)
+
 ### Password Strength Analysis
-![Password Strength Analysis](./screenshot-analysis.png)
+![Password Strength Analysis](./Screenshots/password_breached.png)
 
 ### Generated Passwords
-![Generated Passwords](./screenshot-generated.png)
+![Generated Passwords](./Screenshots/password_generator.png)
 
 ---
 
