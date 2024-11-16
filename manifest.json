@@ -1,6 +1,6 @@
 {
-	"id": "password-audit-plugin",
-	"name": "Password Audit Plugin",
+	"id": "password-audit",
+	"name": "Password Audit",
 	"version": "1.0.0",
 	"minAppVersion": "0.15.0",
 	"description": "A plugin to audit passwords for strength and breaches, and generate secure passwords.",
