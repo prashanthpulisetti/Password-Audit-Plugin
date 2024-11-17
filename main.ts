@@ -5,22 +5,25 @@ const VIEW_TYPE_PASSWORD_AUDIT = "password-audit-view";
 
 export default class PasswordAuditPlugin extends Plugin {
     async onload() {
+        // Register a custom view
         this.registerView(
             VIEW_TYPE_PASSWORD_AUDIT,
             (leaf) => new PasswordAuditView(leaf)
         );
 
+        // Add a command to open the audit panel
         this.addCommand({
-            id: "open-password-audit",
-            name: "Open Password Audit Panel",
+            id: "open-audit-panel",
+            name: "Open Audit Panel",
             callback: () => {
                 this.activateView();
             },
         });
 
+        // Add a command to generate a secure password
         this.addCommand({
-            id: "generate-password",
-            name: "Generate Password",
+            id: "generate-secure-password",
+            name: "Generate Secure Password",
             callback: () => {
                 this.activateView((view) => {
                     const password = this.generatePassword(16);
@@ -32,6 +35,7 @@ export default class PasswordAuditPlugin extends Plugin {
         console.log("Password Audit Plugin loaded.");
     }
 
+    // Activate the custom view
     async activateView(callback?: (view: PasswordAuditView) => void) {
         const leaves = this.app.workspace.getLeavesOfType(VIEW_TYPE_PASSWORD_AUDIT);
         if (leaves.length === 0) {
@@ -46,15 +50,25 @@ export default class PasswordAuditPlugin extends Plugin {
         if (callback && view) callback(view);
     }
 
+    // Generate a secure password
     generatePassword(length: number): string {
-        const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()";
+        const chars = "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789!@#$%^&*()";
         return Array.from({ length }, () =>
-            chars[Math.floor(Math.random() * chars.length)]
+            chars[
+                Math.floor(
+                    crypto.getRandomValues(new Uint32Array(1))[0] /
+                        (0xffffffff + 1) *
+                        chars.length
+                )
+            ]
         ).join("");
     }
 
     onunload() {
-        this.app.workspace.detachLeavesOfType(VIEW_TYPE_PASSWORD_AUDIT);
+        console.log("Password Audit Plugin unloaded.");
+        // Cleanup styles if injected
+        const style = document.querySelector("style.password-audit-style");
+        if (style) style.remove();
     }
 }
 
@@ -152,12 +166,18 @@ class PasswordAuditView extends ItemView {
     }
 
     async checkPasswordBreach(password: string): Promise<boolean> {
-        const hash = await this.hashPassword(password);
-        const prefix = hash.substring(0, 5);
-        const response = await fetch(`https://api.pwnedpasswords.com/range/${prefix}`);
-        const text = await response.text();
-        const breaches = text.split("\n");
-        return breaches.some((line) => line.startsWith(hash.substring(5).toUpperCase()));
+        try {
+            const hash = await this.hashPassword(password);
+            const prefix = hash.substring(0, 5);
+            const response = await fetch(`https://api.pwnedpasswords.com/range/${prefix}`);
+            const text = await response.text();
+            const breaches = text.split("\n");
+            return breaches.some((line) => line.startsWith(hash.substring(5).toUpperCase()));
+        } catch (error) {
+            console.error("Error checking password breach:", error);
+            new Notice("Failed to check password breach. Please try again later.");
+            return false;
+        }
     }
 
     async hashPassword(password: string): Promise<string> {
@@ -168,7 +188,9 @@ class PasswordAuditView extends ItemView {
     }
 
     injectCSS() {
+        if (document.querySelector("style.password-audit-style")) return; // Prevent duplicate injection
         const style = document.createElement("style");
+        style.classList.add("password-audit-style");
         style.innerText = `
         .password-input-container { margin-bottom: 16px; }
         .password-results-container {
