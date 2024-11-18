@@ -14,7 +14,7 @@ jobs:
         repo-token: ${{ secrets.GITHUB_TOKEN }}
         issue-message: |
           Hi there, @${{ github.actor }}! 👋  
-          Welcome to the **[Repository Name]** community! 🚀  
+          Welcome to the **{Repository Name}** community! 🚀  
           Thank you for opening an issue. We're thrilled to have your input and will review it as soon as possible.  
           If you have any questions or need help, feel free to ask. We're here to support you! 💬  
           Happy coding! 😊
