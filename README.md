@@ -1,24 +1,75 @@
 # Password Audit Plugin
 
-A minimalist password audit tool for Obsidian. This plugin lets you:
-- Analyze password strength based on best practices.
-- Check if a password has been breached using the Have I Been Pwned API.
-- Generate secure passwords with a single click.
+A powerful Obsidian plugin to help you **audit passwords** for strength and security breaches. It also allows you to **generate secure passwords** with ease.
 
-## Features
-1. **Password Strength Analyzer**:
-   - Check the strength of a password based on length and complexity.
-   - Provides warnings for weak passwords.
-2. **Password Breach Checker**:
-   - Uses the [Have I Been Pwned](https://haveibeenpwned.com/) API to check if a password has been exposed in data breaches.
-3. **Password Generator**:
-   - Generate random, secure passwords.
+---
 
-## Installation
-1. Clone or download this repository.
-2. Place the plugin folder into your `.obsidian/plugins` directory.
-3. Enable the "Password Audit Plugin" from Obsidian's settings under `Community Plugins`.
+## 🚀 Features
 
-## Usage
-- Open the Password Audit panel from the command palette (`Ctrl+P` -> "Open Password Audit Panel").
-- Use the panel to analyze, check, or generate passwords.
+- **Password Strength Analysis**: Check the strength of any password with detailed feedback.
+- **Breached Password Check**: Verify if a password has been compromised in a known data breach using [Have I Been Pwned](https://haveibeenpwned.com/).
+- **Secure Password Generation**: Generate strong, secure passwords with customizable lengths.
+- **Clipboard Support**: Copy generated passwords to the clipboard with a single click.
+
+---
+
+## 📖 How to Install
+
+1. Open **Settings** in Obsidian.
+2. Navigate to **Community Plugins**.
+3. Click **Browse** and search for `"Password Audit Plugin"`.
+4. Install the plugin and enable it.
+
+---
+
+## 🛠️ Usage
+
+1. Open the Password Audit panel via the command palette (`Ctrl+P` or `Cmd+P`) and select `Open Password Audit Panel`.
+2. **Analyze a Password**:
+   - Enter a password in the text box to see its strength and check if it has been breached.
+3. **Generate a Password**:
+   - Use the `Generate Password` command to create a strong password.
+   - Click the **Copy Password** button to copy it to the clipboard.
+
+---
+
+## 🖼️ Screenshots
+
+### Access Plugin
+![Command Panel](./Screenshots/commandlet.png)
+
+### Password Strength Analysis
+![Password Strength Analysis](./Screenshots/password_breached.png)
+
+### Generated Passwords
+![Generated Passwords](./Screenshots/password_generator.png)
+
+---
+
+## 💻 Development Setup
+
+1. Clone this repository:
+   ```bash
+   git clone https://github.com/pulisettis/Password-Audit-Plugin.git
+   cd Password-Audit-Plugin
+
+## Install dependencies:
+
+```bash
+npm install
+```
+Build the plugin:
+
+```bash
+npm run build
+```
+Copy the compiled files to your .obsidian/plugins folder to test it locally.
+
+## 🤝 Contributing
+Contributions are welcome! Please fork the repository, make your changes, and submit a pull request.
+
+## 🌟 Follow Me
+Stay updated with my latest work!
+Follow me on Twitter: @pulisettis
+
+

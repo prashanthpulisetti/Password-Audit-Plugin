@@ -1,0 +1,30 @@
+name: Greetings
+
+on: [pull_request_target, issues]
+
+jobs:
+  greeting:
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+      pull-requests: write
+    steps:
+    - uses: actions/first-interaction@v1
+      with:
+        repo-token: ${{ secrets.GITHUB_TOKEN }}
+        issue-message: |
+          Hi there, @${{ github.actor }}! 👋  
+          Welcome to the **{Repository Name}** community! 🚀  
+          Thank you for opening an issue. We're thrilled to have your input and will review it as soon as possible.  
+          If you have any questions or need help, feel free to ask. We're here to support you! 💬  
+          Happy coding! 😊
+        pr-message: |
+          Hey @${{ github.actor }}! 🎉  
+
+          Thank you for your pull request! Your effort is truly appreciated, and we’re excited to review it. 💪  
+          Just a quick reminder to ensure:  
+          - Your changes are clear and well-explained in the PR description.  
+          - Any relevant tests have been added or updated.  
+
+          We're so glad to have you contributing to **[Repository Name]**. Don't hesitate to reach out if you have questions. 🙌  
+          Keep being awesome! 🚀  
