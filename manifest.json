@@ -5,6 +5,6 @@
 	"minAppVersion": "0.15.0",
 	"description": "Audit password strength, check breaches, and generate secure passwords. Not a password manager.",
 	"author": "Sai Prashanth Pulisetti",
-	"authorUrl": "https://github.com/pulisettis",
+	"authorUrl": "https://github.com/prashanthpulisetti",
 	"isDesktopOnly": false
 }
